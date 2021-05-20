@@ -1,0 +1,7 @@
+{
+    "greeting": ["**Welcome to the DiTo Game!** \nFor this game you need to provide decriptions and discuss with your partner.",
+                 "Remember the following command to play the game: \n\n(1) Type **/done** once you and your partner think you are done.",
+                 "Please type **/ready** to begin the game."],
+    "instr_title": "Identify the difference.",
+    "instr": "The image that you see is slightly different from the one your partner sees. \n(1) Identify the difference! \n(2) Once you agree that you have found it, you both need to type **/done** to end the game. \n(Do not forget the / preceding the word)"
+}
