@@ -1,0 +1,134 @@
+{
+  "title": "DiTo Task Room",
+  "html": [
+    {
+      "layout-type": "div",
+      "class": "card",
+      "layout-content": [
+        {
+          "layout-type": "div",
+          "layout-content": [
+            {
+              "layout-type": "b",
+              "layout-content": [
+                {
+                  "layout-type": "lighter",
+                  "id": "instr_title"
+                }
+              ]
+            }
+          ],
+          "style": "color: #abb2b9;"
+        },
+        {
+          "layout-type": "hr",
+          "layout-content": "",
+          "style": "margin: 2px; background-color: #abb2b9; opacity: .50;"
+        },
+        {
+          "layout-type": "div",
+          "id": "instr",
+          "style": "white-space: pre-wrap;"
+        },
+        {
+          "layout-type": "div",
+          "id": "image-area",
+          "layout-content": [
+            {
+              "layout-type": "image",
+              "id": "current-image",
+              "style": "max-width: 45vw; object-fit: contain; padding: 2%;"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "css": {
+    "html, body": {
+        "background": "#f8f9fa"
+    },
+    "header, footer": {
+        "padding": "7px",
+        "background": "#00305e",
+        "border-bottom": "#e5e7e9",
+        "box-shadow": "rgba(0, 0, 0, 0.05) 0 1px 1px 0,rgba(0, 0, 0, 0.45) 0 4px 4px 0"
+    },
+    "header .latency": {
+        "color": "#818bac",
+        "margin": "3px"
+    },
+    "header .users": {
+        "color": "#818bac",
+        "margin": "3px"
+    },
+    ".card": {
+        "position": "relative",
+        "display": "flex",
+        "flex-direction": "column",
+        "min-width": "0",
+        "background-color": "#fff",
+        "background-clip": "border-box",
+        "border": "1px solid rgba(0,0,0,.125)",
+        "border-radius": ".25rem",
+        "height": "100%!important",
+        "margin": "12px",
+        "padding": "15px"
+    },
+    ".other .msg": {
+        "box-shadow": "-1px 2px 0 #e5e7e9"
+    },
+    ".self .msg, .command .msg": {
+        "box-shadow": "1px 2px 0 #c2c2c2"
+    },
+    ".other .message-box": {
+        "background": "#e5e7e9"
+    },
+    ".self .message-box, .command .message-box": {
+        "background": "#c2c2c2"
+    },
+    ".other:before": {
+        "border": "5px solid #e5e7e9",
+        "border-left-color": "transparent",
+        "border-bottom-color": "transparent",
+        "margin-right": "-2px"
+    },
+    ".self:after, .command:after": {
+        "border": "5px solid #c2c2c2",
+        "border-right-color": "transparent",
+        "border-top-color": "transparent",
+        "margin-left": "-2px"
+    },
+    "time:before": {
+        "content": "''"
+    },
+    "#content::-webkit-scrollbar-track": {
+        "-webkit-box-shadow": "inset 0 0 6px rgba(0,0,0,0.3)",
+        "background-color": "#F5F5F5"
+    },
+    "#content::-webkit-scrollbar": {
+        "width": "4px",
+        "background-color": "#F5F5F5"
+    },
+    "#content::-webkit-scrollbar-thumb": {
+        "-webkit-box-shadow": "inset 0 0 6px rgba(0,0,0,.3)",
+        "border-radius": "10px",
+        "background-color": "#818bac"
+    },
+    "#sidebar:after": {
+        "background-color": "#818bac",
+        "width": "2px",
+        "border-left": "1px #818bac",
+        "box-shadow": "1px 0px 2px #818bac"
+    },
+    "#image-area": {
+        "margin": "0 auto"
+    }
+  },
+  "scripts": {
+    "incoming-text": "markdown",
+    "incoming-image": "display-image",
+    "submit-message": "send-message",
+    "print-history": "markdown-history"
+  }
+}
