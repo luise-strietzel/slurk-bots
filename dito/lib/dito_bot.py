@@ -97,6 +97,7 @@ class DiToNamespace(BaseNamespace):
         self.last_message_from = dict()
 
         self.waiting_timer = None
+        self.received_waiting_token = set()
 
         self.id = None
         self.config = configparser.ConfigParser()
@@ -127,6 +128,9 @@ class DiToNamespace(BaseNamespace):
         if data["task"] == self.task_id:
             # the user does no longer wait
             self.waiting_timer.cancel()
+            for usr in data['users']:
+                if usr['id'] in self.received_waiting_token:
+                    self.received_waiting_token.remove(usr['id'])
 
             # create image items for this room
             LOG.info("Create data for the new task room...")
@@ -482,7 +486,9 @@ class DiToNamespace(BaseNamespace):
                         {"msg": "The game is over! Thank you for participating!",
                          "room": room}
                     )
+                    sleep(1)
                     self.confirmation_code(room, "success")
+                    sleep(1)
                     self.close_game(room)
                 else:
                     self.emit(
@@ -605,29 +611,43 @@ class DiToNamespace(BaseNamespace):
             room (string): The room where
             user_id (int): User that has waited for a specified time.
         """
-        self.emit(
-            "text",
-            {"msg": "Unfortunately we could not find a partner for you!",
-             "room": "waiting_room", "receiver_id": user_id}
-        )
-        # create token and send it to user
-        self.confirmation_code("waiting_room",
-                               "no_partner",
-                               receiver_id=user_id)
-        sleep(5)
-        self.emit(
-            "text",
-            {"msg": "You may also wait some more :)",
-             "room": room, "receiver_id": user_id}
-         )
-        # no need to cancel as the running out of this timer
-        # triggered this event
-        self.waiting_timer = Timer(
-            self.config.getfloat("TIMERS", "waiting")*60,
-            self._no_partner,
-            args=[user_id, room]
-        )
-        self.waiting_timer.start()
+        if user_id not in self.received_waiting_token:
+            self.emit(
+                "text",
+                {"msg": "Unfortunately we could not find a partner for you!",
+                 "room": "waiting_room", "receiver_id": user_id}
+            )
+            # create token and send it to user
+            self.confirmation_code("waiting_room",
+                                   "no_partner",
+                                   receiver_id=user_id)
+            sleep(5)
+            self.emit(
+                "text",
+                {"msg": "You may also wait some more :)",
+                 "room": room, "receiver_id": user_id}
+             )
+            # no need to cancel as the running out of this timer
+            # triggered this event
+            self.waiting_timer = Timer(
+                self.config.getfloat("TIMERS", "waiting")*60,
+                self._no_partner,
+                args=[user_id, room]
+            )
+            self.waiting_timer.start()
+            self.received_waiting_token.add(user_id)
+        else:
+            self.emit(
+                "text",
+                {"msg": "You won't be remunerated for further waiting time.",
+                 "room": room, "receiver_id": user_id}
+            )
+            sleep(2)
+            self.emit(
+                "text",
+                {"msg": "Please check back at another time of the day.",
+                 "room": room, "receiver_id": user_id}
+            )
 
     def _noreply(self, data):
         """One participant did not receive an answer for a while."""
@@ -697,11 +717,15 @@ class DiToNamespace(BaseNamespace):
             room (str): Unique room identifier.
         """
         self.emit(
-            "set_attribute",
-            {"room": room,
-             "id": "type-area",
-             "attribute": "style",
-             "value": "visibility:hidden"}
+            "text",
+            {"msg": "You will be moved out of this room in 30s.",
+             "room": room}
+        )
+        sleep(2)
+        self.emit(
+            "text",
+            {"msg": "Make sure to copy your token before that.",
+             "room": room}
         )
         # set the room to read only
         response = requests.put(
@@ -709,12 +733,27 @@ class DiToNamespace(BaseNamespace):
             headers={'Authorization': f"Token {self.token}"},
             json=dict(read_only=True)
         )
-        LOG.info(response)
         # disable all timers
-        for timer_name in {"ready_timer", "game_timer", "done_timer"}:
+        for timer_name in {"ready_timer", "game_timer", "done_timer", "last_answer_timer"}:
             timer = getattr(self.timers_per_room[room], timer_name)
             if timer is not None:
                 timer.cancel()
+
+        sleep(15)
+        for usr in self.players_per_room[room]:
+            sleep(15)
+            self.emit("join_room", {"user": usr["id"], "room": "waiting_room"})
+            self.emit("leave_room", {"user": usr["id"], "room": room})
+
+            self.emit(
+                "text",
+                {"msg": "Please refresh this page if you are interested in playing another round.",
+                 "room": "waiting_room",
+                 "receiver_id": usr["id"]}
+            )
+
+        self.rename_users(room)
+
         # remove any info only needed for a running game
         self.images_per_room.pop(room)
         self.timers_per_room.pop(room)
@@ -722,3 +761,28 @@ class DiToNamespace(BaseNamespace):
         self.ready_per_room.pop(room)
         self.done_per_room.pop(room)
         self.messages_per_room.pop(room)
+
+    def rename_users(self, room):
+        response = requests.get(
+                        f"{self.uri}/users",
+                        headers={"Authorization": f"Token {self.token}"}
+                    )
+        user_names = {usr['name'] for usr in response.json()}
+
+        names_f = os.path.join(ROOT, "data", "names.txt")
+        with open(names_f, 'r', encoding="utf-8") as f:
+            names = [line.rstrip() for line in f]
+            for usr in self.players_per_room[room]:
+                new_name = random.choice(names)
+                if new_name in user_names:
+                    suffix = 2
+                    while f"{new_name}{suffix}" in user_names:
+                        suffix += 1
+                    new_name = f"{new_name}{suffix}"
+                user_names.remove(usr['name'])
+                user_names.add(new_name)
+                requests.put(
+                    f"{self.uri}/user/{usr['id']}",
+                    json={'name': new_name},
+                    headers={"Authorization": f"Token {self.token}"}
+                )

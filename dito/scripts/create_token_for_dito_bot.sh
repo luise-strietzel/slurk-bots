@@ -9,7 +9,7 @@ then
         -H "Authorization: Token $ADMIN" \
         -H "Content-Type: application/json" \
         -H "Accept: application/json" \
-        -d "{\"room\": \"$ROOM\", \"message_text\": true, \"room_update\": true, \"user_query\": true, \"user_room_join\": true}" \
+        -d "{\"room\": \"$ROOM\", \"message_text\": true, \"message_command\": true, \"room_update\": true, \"user_query\": true, \"user_room_join\": true, \"user_room_leave\": true, \"user_put\": true}" \
         localhost/api/v2/token | sed 's/^"\(.*\)"$/\1/'
 else
   echo "You need to specify the authorization token and a room identifier."

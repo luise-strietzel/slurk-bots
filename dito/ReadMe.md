@@ -24,6 +24,10 @@ Download the resources from GitHub. Both of them should end up being located in 
 git clone -b development git@github.com:wencke-lm/slurk-bots.git
 git clone git@github.com:clp-research/slurk.git
 ```
+Start docker:
+```sh
+sudo service docker start
+```
 Navigate into the `slurk-bots` repository:
 ```sh
 cd slurk-bots
