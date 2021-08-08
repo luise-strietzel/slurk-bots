@@ -296,15 +296,17 @@ class DiToBot:
             user_id = data["user"]["id"]
 
             if room_id in self.images_per_room:
-                if data["command"] == "difference":
+                if data["command"] == "different":
                     self.sio.emit(
                          "text",
                          {"message": "You need to provide a difference description!",
                           "room": room_id,
                           "receiver_id": user_id}
-                    )  
-                elif data["command"].startswith("difference"):
-                    self._command_difference(room_id, user_id)
+                    )
+                elif data["command"].startswith("different"):
+                    self._command_difference(room_id, user_id, "different")
+                elif data["command"].startswith("same"):
+                    self._command_difference(room_id, user_id, "same")
                 elif data["command"].startswith("ready"):
                     self._command_ready(room_id, user_id)
                 elif data["command"] in {"noreply", "no reply"}:
@@ -387,7 +389,7 @@ class DiToBot:
             )
             self.timers_per_room[room_id].game_timer.start()
 
-    def _command_difference(self, room_id, user_id):
+    def _command_difference(self, room_id, user_id, same_dif):
         """Must be sent to end a game round."""
         # identify the user that has not sent this event
         curr_usr, other_usr = self.players_per_room[room_id]
@@ -411,15 +413,24 @@ class DiToBot:
                  "room": room_id}
             )
         # this user has already recently typed /difference
-        elif curr_usr["status"] == "done":
+       elif curr_usr["status"] == "done" :
             sleep(.5)
-            self.sio.emit(
-                "text",
-                {"message": "You have already typed **/difference**.",
-                 "receiver_id": curr_usr["id"],
-                 "room": room_id,
-                 "html": True}
-            )
+            if same_dif =="different":
+                self.sio.emit(
+                    "text",
+                    {"message": "You have already typed **/different**.",
+                    "receiver_id": curr_usr["id"],
+                    "room": room_id,
+                    "html": True}
+                    )
+            else:
+                self.sio.emit(
+                    "text",
+                    {"message": "You have already typed **/same**.",
+                    "receiver_id": curr_usr["id"],
+                    "room": room_id,
+                    "html": True}
+                    )
         else:
             curr_usr["status"] = "done"
 
@@ -432,23 +443,43 @@ class DiToBot:
                     args=[room_id, user_id]
                 )
                 self.timers_per_room[room_id].done_timer.start()
-                self.sio.emit(
-                    "text",
-                    {"message": "Let's wait for your partner "
-                                "to also type **/difference**.",
-                     "receiver_id": curr_usr["id"],
-                     "room": room_id,
-                     "html": True}
-                )
-                self.sio.emit(
-                    "text",
-                    {"message": "Your partner thinks that you "
-                                "have found the difference. "
-                                "Type **/difference** and a **brief description** if you agree.",
-                     "receiver_id": other_usr["id"],
-                     "room": room_id,
-                     "html": True}
-                )
+                if same_dif =="different":
+                    self.sio.emit(
+                        "text",
+                        {"message": "Let's wait for your partner "
+                                    "to also type **/different**.",
+                                    "receiver_id": curr_usr["id"],
+                                    "room": room_id,
+                                    "html": True}
+                                    )
+                    self.sio.emit(
+                        "text",
+                        {"message": "Your partner thinks that "
+                                    "your views are different. "
+                                    "Type **/different** and a **brief description** if you agree.",
+                                    "receiver_id": other_usr["id"],
+                                    "room": room_id,
+                                    "html": True}
+                                    )
+                else:
+                    self.sio.emit(
+                        "text",
+                        {"message": "Let's wait for your partner "
+                                    "to also type **/same**.",
+                                    "receiver_id": curr_usr["id"],
+                                    "room": room_id,
+                                    "html": True}
+                                    )
+                    self.sio.emit(
+                        "text",
+                        {"message": "Your partner thinks that you "
+                                    "see the same image. "
+                                    "Type **/same** if you agree.",
+                                    "receiver_id": other_usr["id"],
+                                    "room": room_id,
+                                    "html": True}
+                                    )
+
             # both users think they are done with the game
             else:
                 self.timers_per_room[room_id].done_timer.cancel()
@@ -498,7 +529,7 @@ class DiToBot:
         self.sio.emit(
             "text",
             {"message": "Your partner seems to still want to discuss some more. "
-                        "Send /difference again once you two are really finished.",
+                        "Send /different ore /same again once you two are really finished.",
              "receiver_id": user_id,
              "room": room_id}
         )
