@@ -413,7 +413,7 @@ class DiToBot:
                  "room": room_id}
             )
         # this user has already recently typed /difference
-       elif curr_usr["status"] == "done" :
+        elif curr_usr["status"] == "done":
             sleep(.5)
             if same_dif =="different":
                 self.sio.emit(
