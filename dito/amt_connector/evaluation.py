@@ -10,7 +10,7 @@ import requests
 # Evaluation
 # ---------------------------------------------------------------------------------------------------------------------
 class Evaluation:
-    """ Evaluation Module for the slack tasks (cola chat).
+    """ Evaluation Module for the slack tasks (dito chat).
 
     This class provides the code to evaluate all dialogues/tasks given a set of log-files from slurk.
     There is one function available:
@@ -70,7 +70,7 @@ class Evaluation:
         for log in logs:
             # Check if the log comes from the meetup. This is meetup, because slack does not allow to create an own
             # chat room.
-            if "cola" in log:
+            if "dito" in log:
                 # Evaluate the tokens.
                 tokens, evaluation_info = self._check_chat_log(log)
                 # Append the evaluated tokens.
@@ -104,7 +104,7 @@ class Evaluation:
             # Go through all log entries.
             for item in log_text:
                 # Check for a token print.
-                if item['user']['name'] == 'Cola Bot' and item['event'] == 'confirmation_log':
+                if item['user']['name'] == 'DiTo Bot' and item['event'] == 'confirmation_log':
                     print(item)
                     # Split the print into user_id and token.
                     token = item['message'][:6]
@@ -136,7 +136,7 @@ class Evaluation:
             # Go through all log entries.
             for item in log_text:
                 # Check for a token print. The chat room tokens are generated via the chat moderator.
-                if item['user']['name'] == 'Cola Bot' and item['event'] == 'confirmation_log':
+                if item['user']['name'] == 'DiTo Bot' and item['event'] == 'confirmation_log':
                     print(item)
                     # Split the print into user_id and token.
                     chat_token = item['amt_token']
@@ -168,12 +168,15 @@ class Evaluation:
 
         for item in log_text:
             #print(item['type'])
-            if item['event'] == 'text_message' and item['user']['name'] != "Cola Bot":
+            
+#            if item['event'] == 'text_message' and item['user']['name'] != "DiTo Bot":
+            if item['event'] == 'text_message' and item['user_id'] != "10" and item['user_id'] != "9":
                 print(room_id)
                 if str(item['room']).startswith(room_id):
                     #print("check", item['msg'])
                     utterances_in_room.append(item)
-            elif item['event'] == 'command' and item['user']['name'] != "Cola Bot" and item['command'].startswith('answer'):
+          #  elif item['event'] == 'command' and item['user']['name'] != "DiTo Bot" and item['command'].startswith('answer'):
+            elif item['event'] == 'command' and item['user_id'] != "10" and item['user_id'] != "9" and (item['command'].startswith('same') or item['command'].startswith('different')) :
                 if str(item['room']).startswith(room_id):
                     utterances_ans_room.append(item)
 
@@ -240,6 +243,7 @@ class Evaluation:
         "get the token for a user id"
         
         url = "http://141.89.97.91/api/v2/tokens"
+        url = "slurk/api/tokens"
         headers = {'Authorization': "Token " + CONFIG["logs"]["admin_token"]}
         response = requests.request("GET", url, headers=headers)
 

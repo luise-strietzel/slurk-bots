@@ -36,7 +36,7 @@ Q_ATTR = {
     'AutoApprovalDelayInSeconds': 60*720,
     # The reward we offer Workers for each task
     'Reward': '0.15',
-    'Title': 'Play our Chat Game for 2 workers and earn up to 0.80$ in 5 minutes!',
+    'Title': 'Play our Chat Game for 2 workers and earn up to 0.95$ in 9 minutes!',
     'Keywords': 'dialogue, game',
     'Description': 'You and your partner need to discuss and reason,\
                             togther. It is important in this game that both,\
