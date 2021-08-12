@@ -9,13 +9,13 @@ from slurk_link_generator import insert_names_and_tokens
 
 RESULTS = []
 
-SLIDES = ['https://raw.githubusercontent.com/luise-strietzel/slurk-bots/master/dito/instruction_slides/dito_instr_001.jpg',
-          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/master/dito/instruction_slides/dito_instr_002.jpg',
-          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/master/dito/instruction_slides/dito_instr_003.jpg',
-          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/master/dito/instruction_slides/dito_instr_004.jpg',
-          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/master/dito/instruction_slides/dito_instr_005.jpg',
-          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/master/dito/instruction_slides/dito_instr_006.jpg',
-          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/master/dito/instruction_slides/dito_instr_007.jpg']
+SLIDES = ['https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide1.jpg',
+          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide2.jpg',
+          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide3.jpg',
+          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide4.jpg',
+          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide5.jpg',
+          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide6.jpg',
+          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide7.jpg']
 
 
 HTML = open('./dito.html', 'r').read()
@@ -35,8 +35,8 @@ Q_ATTR = {
     # the HIT is automatically approved after this number of minutes (0.5 day)
     'AutoApprovalDelayInSeconds': 60*720,
     # The reward we offer Workers for each task
-    'Reward': '0.10',
-    'Title': 'Play our Chat Game for 2 workers and earn up to 0.85$ in 3 minutes!',
+    'Reward': '0.15',
+    'Title': 'Play our Chat Game for 2 workers and earn up to 0.80$ in 5 minutes!',
     'Keywords': 'dialogue, game',
     'Description': 'You and your partner need to discuss and reason,\
                             togther. It is important in this game that both,\
@@ -59,8 +59,8 @@ def create(login_url):
                         replace('${Image4}', SLIDES[3]).\
                         replace('${Image5}', SLIDES[4]).\
                         replace('${Image6}', SLIDES[5]).\
-                        replace('${Image7}', SLIDES[6]).\
-                        replace('${Image8}', SLIDES[7])
+                        replace('${Image7}', SLIDES[6])
+                   #     replace('${Image8}', SLIDES[7])
     #print(question)
     mturk_connector = aws_config.ConnectToMTurk()
     #mturk_connector.create_command_qualification()
