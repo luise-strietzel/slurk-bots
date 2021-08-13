@@ -54,7 +54,7 @@ def create(login_url):
     print(login_url)
     question = QUESTION.replace('${Link}', login_url).\
                         replace('${Image1}', SLIDES[0]).\
-                        replace('${Image2}', SLIDES[1]).\
+                        replace('${{Image2}}', SLIDES[1]).\
                         replace('${Image3}', SLIDES[2]).\
                         replace('${Image4}', SLIDES[3]).\
                         replace('${Image5}', SLIDES[4]).\
