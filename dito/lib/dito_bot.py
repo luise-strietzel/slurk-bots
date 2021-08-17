@@ -674,14 +674,7 @@ class DiToBot:
         """Erase any data structures no longer necessary."""
         self.sio.emit(
             "text",
-            {"message": "You will be moved out of this room "
-                        f"in {TIME_CLOSE*2*60}-{TIME_CLOSE*3*60}s.",
-             "room": room_id}
-        )
-        sleep(2)
-        self.sio.emit(
-            "text",
-            {"message": "Make sure to save your token before that.",
+            {"message": "Make sure to save your token before leaving the room!",
              "room": room_id}
         )
         self.room_to_read_only(room_id)
@@ -695,41 +688,42 @@ class DiToBot:
             if timer is not None:
                 timer.cancel()
 
-        # send users back to the waiting room
-        sleep(TIME_CLOSE*60)
-        for usr in self.players_per_room[room_id]:
-            sleep(TIME_CLOSE*60)
-
-            self.rename_users(usr["id"])
-
-            response = requests.post(
-                f"{self.uri}/users/{usr['id']}/rooms/{self.waiting_room}",
-                headers={"Authorization": f"Bearer {self.token}"}
-            )
-            if not response.ok:
-                LOG.error(
-                    f"Could not let user join waiting room: {response.status_code}"
-                )
-                response.raise_for_status()
-            LOG.debug("Sending user to waiting room was successful.")
-
-            response = requests.delete(
-                f"{self.uri}/users/{usr['id']}/rooms/{room_id}",
-                headers={"If-Match": response.headers["ETag"],
-                         "Authorization": f"Bearer {self.token}"}
-            )
-            if not response.ok:
-                LOG.error(
-                    f"Could not remove user from task room: {response.status_code}"
-                )
-                response.raise_for_status()
-            LOG.debug("Removing user from task room was successful.")
-
         # remove any task room specific objects
         self.images_per_room.pop(room_id)
         self.timers_per_room.pop(room_id)
         self.players_per_room.pop(room_id)
         self.last_message_from.pop(room_id)
+
+        # send users back to the waiting room
+#        sleep(TIME_CLOSE*60)
+#        for usr in self.players_per_room[room_id]:
+#            sleep(TIME_CLOSE*60)
+
+#            self.rename_users(usr["id"])
+
+#            response = requests.post(
+#                f"{self.uri}/users/{usr['id']}/rooms/{self.waiting_room}",
+#                headers={"Authorization": f"Bearer {self.token}"}
+#            )
+#            if not response.ok:
+#                LOG.error(
+#                    f"Could not let user join waiting room: {response.status_code}"
+#                )
+#                response.raise_for_status()
+#            LOG.debug("Sending user to waiting room was successful.")
+
+#            response = requests.delete(
+#                f"{self.uri}/users/{usr['id']}/rooms/{room_id}",
+#                headers={"If-Match": response.headers["ETag"],
+#                         "Authorization": f"Bearer {self.token}"}
+#            )
+#            if not response.ok:
+#                LOG.error(
+#                    f"Could not remove user from task room: {response.status_code}"
+#                )
+#                response.raise_for_status()
+#            LOG.debug("Removing user from task room was successful.")
+
 
     def room_to_read_only(self, room_id):
         """Set room to read only."""
