@@ -4,7 +4,7 @@ import json
 import xmltodict
 import aws_config
 from openpyxl import Workbook, load_workbook
-import configparser
+import sys
 
 TOTAL_BONUS=0
 
@@ -32,7 +32,6 @@ class Payment:
         self.path_payment_log_excel = "./results/" + mturk_session + "/payment_log.xlsx"
         self.tokens = []
         self.evaluation_info = []
-        self.mturk = aws_config.ConnectToMTurk().mturk
 
 # --- public functions ------------------------------------------------------------------------------------------------
     def pay_hits(self):
@@ -112,7 +111,7 @@ class Payment:
 
                     # Ask for all assignments via the boto3 client for the given HIT-Id.
                     try:
-                        assignments_from_mturk = self.mturk.list_assignments_for_hit(
+                        assignments_from_mturk = aws_config.ConnectToMTurk.mturk.list_assignments_for_hit(
                             HITId=published_hit['hit_id'],
                             AssignmentStatuses=['Submitted', 'Approved', 'Rejected'],
                             MaxResults=10
@@ -177,13 +176,12 @@ class Payment:
             assignmentId    A string. The Assignment ID from the HIT.
 
         """
-        print(answer)
         valid_token = False
         result = ""
 
         if answer is None:
             # If the turker has sent an empty string, the HIT gives them waiting room money.
-            self.mturk.approve_assignment(
+            aws_config.ConnectToMTurk.mturk.approve_assignment(
                 AssignmentId=assignmentId,
                 RequesterFeedback='Thank you, and better luck next time.',
                 OverrideRejection=False
@@ -197,7 +195,7 @@ class Payment:
                 valid_token = True
                 # ... check if it's a waiting room token and pay
                 if evaluation_info['info'] == "waiting_room":
-                    self.mturk.approve_assignment(
+                    aws_config.ConnectToMTurk.mturk.approve_assignment(
                         AssignmentId=assignmentId,
                         RequesterFeedback='Thank you, and better luck next time ;)',
                         OverrideRejection=False
@@ -206,7 +204,7 @@ class Payment:
                     return True, result
                 # ... check if it's a chat room token and pay.
                 elif evaluation_info['info'] == "chat_room":
-                    self.mturk.approve_assignment(
+                    aws_config.ConnectToMTurk.mturk.approve_assignment(
                         AssignmentId=assignmentId,
                         RequesterFeedback='Thank you for chatting. '
                                           'We will check for bonus payment as soon as possible!',
@@ -216,7 +214,7 @@ class Payment:
                     return True, result
                 elif evaluation_info['info'] == "no_reply_pay":
                     # Approve HIT if partner leaves
-                    self.mturk.approve_assignment(
+                    aws_config.ConnectToMTurk.mturk.approve_assignment(
                         AssignmentId=assignmentId,
                         RequesterFeedback='Thank you for chatting. Sorry that your partner did not reply.'
                                           'We will check the log and pay a bonus as fair as possible to you!',
@@ -226,7 +224,7 @@ class Payment:
                     return True, result
                 elif evaluation_info['info'] == "no_reply_no_pay":
                     # Approve HIT if partner leaves
-                    self.mturk.approve_assignment(
+                    aws_config.ConnectToMTurk.mturk.approve_assignment(
                         AssignmentId=assignmentId,
                         RequesterFeedback='Thank you for chatting. Sorry that your partner did not reply.',
                         OverrideRejection=False
@@ -261,7 +259,7 @@ class Payment:
                     else:
                         bonus = time_bonus
                     try:
-                        self.mturk.send_bonus(
+                        aws_config.ConnectToMTurk.mturk.send_bonus(
                            WorkerId=assignment['WorkerId'],
                            BonusAmount=str(round(bonus, 2)),
                            AssignmentId=assignment['AssignmentId'],
@@ -279,7 +277,7 @@ class Payment:
                     return True, result
                 elif evaluation_info['info'] == "no_reply_no_pay":
                     try:
-                        self.mturk.send_bonus(
+                        aws_config.ConnectToMTurk.mturk.send_bonus(
                            WorkerId=assignment['WorkerId'],
                            BonusAmount=str(0.10),
                            AssignmentId=assignment['AssignmentId'],
@@ -300,7 +298,7 @@ class Payment:
                     if time_bonus > 0.56:
                         time_bonus = 0.56
                     try:
-                        self.mturk.send_bonus(
+                        aws_config.ConnectToMTurk.mturk.send_bonus(
                            WorkerId=assignment['WorkerId'],
                            BonusAmount=str(round(time_bonus, 2)),
                            AssignmentId=assignment['AssignmentId'],
@@ -346,10 +344,11 @@ class Payment:
 
 
 if __name__ == '__main__':
-    CONFIG = configparser.ConfigParser()
-    CONFIG.read('config.ini')
-    SESSION = CONFIG['session']['name']
-    pay_module = Payment(SESSION)
-    pay_module.pay_hits()
-    print(TOTAL_BONUS)
-    pay_module.pay_bonus()
+    # pay_module = Payment("mturk_nov29")
+    # #pay_module.pay_hits()
+    # print(TOTAL_BONUS)
+    # pay_module.pay_bonus()
+
+
+    print("This script needs to be updated")
+

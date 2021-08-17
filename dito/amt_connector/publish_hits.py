@@ -9,13 +9,13 @@ from slurk_link_generator import insert_names_and_tokens
 
 RESULTS = []
 
-SLIDES = ['https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide1.jpg',
-          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide2.jpg',
-          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide3.jpg',
-          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide4.jpg',
-          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide5.jpg',
-          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide6.jpg',
-          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide7.jpg']
+SLIDES = ['https://raw.githubusercontent.com/luise-strietzel/slurk-bots/master/dito/instruction_slides/Slide1.jpg',
+          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/master/dito/instruction_slides/Slide2.jpg',
+          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/master/dito/instruction_slides/Slide3.jpg',
+          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/master/dito/instruction_slides/Slide4.jpg',
+          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/master/dito/instruction_slides/Slide5.jpg',
+          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/master/dito/instruction_slides/Slide6.jpg',
+          'https://raw.githubusercontent.com/luise-strietzel/slurk-bots/master/dito/instruction_slides/Slide7.jpg']
 
 
 HTML = open('./dito.html', 'r').read()
@@ -35,8 +35,8 @@ Q_ATTR = {
     # the HIT is automatically approved after this number of minutes (0.5 day)
     'AutoApprovalDelayInSeconds': 60*720,
     # The reward we offer Workers for each task
-    'Reward': '0.15',
-    'Title': 'Play our Chat Game for 2 workers and earn up to 0.95$ in 9 minutes!',
+    'Reward': '0.10',
+    'Title': 'Play our Chat Game for 2 workers and earn up to 0.85$ in 3 minutes!',
     'Keywords': 'dialogue, game',
     'Description': 'You and your partner need to discuss and reason,\
                             togther. It is important in this game that both,\
@@ -52,23 +52,16 @@ def publish(number_of_hits):
 def create(login_url):
     '''defining HITs' template for MTurk'''
     print(login_url)
-    question = QUESTION.replace('${Link}', login_url).\
-                        replace('${Image1}', SLIDES[0]).\
-                        replace('${{Image2}}', SLIDES[1]).\
-                        replace('${Image3}', SLIDES[2]).\
-                        replace('${Image4}', SLIDES[3]).\
-                        replace('${Image5}', SLIDES[4]).\
-                        replace('${Image6}', SLIDES[5]).\
-                        replace('${Image7}', SLIDES[6])
-                   #     replace('${Image8}', SLIDES[7])
-    #print(question)
-    mturk_connector = aws_config.ConnectToMTurk()
-    #mturk_connector.create_command_qualification()
-    mturk = mturk_connector.mturk
-
-    new_hit = mturk.create_hit(
+    new_hit = aws_config.ConnectToMTurk.mturk.create_hit(
         **Q_ATTR,
-        Question=question,
+        Question=QUESTION.replace('${Link}', login_url).\
+        replace('${Image1}', SLIDES[0]).\
+        replace('${Image2}', SLIDES[1]).\
+        replace('${Image3}', SLIDES[2]).\
+        replace('${Image4}', SLIDES[3]).\
+        replace('${Image5}', SLIDES[4]).\
+        replace('${Image6}', SLIDES[5]).\
+        replace('${Image7}', SLIDES[6]),
         QualificationRequirements=[
             #{
             #    'QualificationTypeId' : '3ETJLUMS0DM8X13DGYGLAJ6V7SNU3X',
@@ -93,7 +86,8 @@ def create(login_url):
                 'QualificationTypeId' : '00000000000000000040',
                 'Comparator' : 'GreaterThanOrEqualTo',
                 'IntegerValues' : [
-                    2000
+                    # 2000
+                    20
                     ],
                 'ActionsGuarded': 'PreviewAndAccept'
             }
@@ -118,7 +112,7 @@ if __name__ == "__main__":
     CONFIG = configparser.ConfigParser()
     CONFIG.read('config.ini')
     SESSION = CONFIG['session']['name']
-    HITS = CONFIG['session']['hits']
+    HITS = int(CONFIG['session']['hits'])
 
     publish(HITS)
 
@@ -128,3 +122,4 @@ if __name__ == "__main__":
     MOMENT = time.strftime("%Y-%b-%d__%H_%M_%S", time.localtime())
     with open('./published/' + SESSION + '/data_'+ MOMENT +'.json', 'w') as outfile:
         json.dump(RESULTS, outfile)
+

@@ -1,1 +1,8 @@
 config.ini
+publish_hits_save.py
+slurk_link_generator_save.py
+payment_save.py
+aws_config_save.py
+evaluation_save.py
+dito_save.html
+

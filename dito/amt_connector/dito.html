@@ -8,50 +8,43 @@
 <div class="slideshow-container">
 <div class="mySlides fade">
 <div class="numbertext">1 / 8</div>
-<!--<img src="${Image1}" style="width:100%" />-->
-<img src="https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide1.jpg" style="width:100%" />
+<img src="${Image1}" style="width:100%" />
 <a class="next" onclick="plusSlides(1)">❯</a></div>
 
 <div class="mySlides fade">
 <div class="numbertext">2 / 8</div>
-<!--img src="${{Image2}}" style="width:100%" /-->
-<img src="https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide2.jpg" style="width:100%" />
+<img src="${Image2}" style="width:100%" />
 <a class="prev" onclick="plusSlides(-1)">❮</a> <a class="next" onclick="plusSlides(1)">❯</a></div>
 
 <div class="mySlides fade">
 <div class="numbertext">3 / 8</div>
-<!--img src="${Image3}" style="width:100%" /-->
-<img src="https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide3.jpg" style="width:100%" />
+<img src="${Image3}" style="width:100%" />
 <a class="prev" onclick="plusSlides(-1)">❮</a> <a class="next" onclick="plusSlides(1)">❯</a></div>
 
 <div class="mySlides fade">
 <div class="numbertext">4 / 8</div>
-<!--img src="${Image4}" style="width:100%" /-->
-<img src="https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide4.jpg" style="width:100%" />
+<img src="${Image4}" style="width:100%" />
 <a class="prev" onclick="plusSlides(-1)">❮</a> <a class="next" onclick="plusSlides(1)">❯</a></div>
 
 <div class="mySlides fade">
 <div class="numbertext">5 / 8</div>
-<!--img src="${Image5}" style="width:100%" /-->
-<img src="https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide5.jpg" style="width:100%" />
+<img src="${Image5}" style="width:100%" />
 <a class="prev" onclick="plusSlides(-1)">❮</a> <a class="next" onclick="plusSlides(1)">❯</a></div>
 
 <div class="mySlides fade">
 <div class="numbertext">6 / 8</div>
-<!--img src="${Image6}" style="width:100%" /-->
-<img src="https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide6.jpg" style="width:100%" />
+<img src="${Image6}" style="width:100%" />
 <a class="prev" onclick="plusSlides(-1)">❮</a> <a class="next" onclick="plusSlides(1)">❯</a></div>
 
 <div class="mySlides fade">
 <div class="numbertext">7 / 8</div>
-<!--img src="${Image7}" style="width:100%" /-->
-<img src="https://raw.githubusercontent.com/luise-strietzel/slurk-bots/dito_task_form_2/dito/instruction_slides/Slide7.jpg" style="width:100%" />
+<img src="${Image7}" style="width:100%" />
 <a class="prev" onclick="plusSlides(-1)">❮</a> <a class="next" onclick="plusSlides(1)">❯</a></div>
 
-<!--div class="mySlides fade">
+<div class="mySlides fade">
 <div class="numbertext">8 / 8</div>
 <img src="${Image8}" style="width:100%" />
-<a class="prev" onclick="plusSlides(-1)">❮</a> <a class="next" onclick="plusSlides(1)">❯</a></div-->
+<a class="prev" onclick="plusSlides(-1)">❮</a> <a class="next" onclick="plusSlides(1)">❯</a></div>
 
 <div class="mySlides fade">
 <form action="https://workersandbox.mturk.com/mturk/externalSubmit.com" id="mturk_form" method="post" name="mturk_form">
@@ -60,7 +53,7 @@
 <h1>The DiTo Game</h1>
 
 <p style="text-align:center">Click the link below to start the game!</p>
-<p id="p1" style="text-align:center">REPLACE ME</p>
+<p id="p1" style="text-align:center">${Link}</p>
 
 <div>
   <p style="text-align:center">Type in your GAME TOKEN in the field below:</p>
@@ -286,8 +279,7 @@ window.onload = function () {
   }
   else {
     document.getElementById("p1").innerHTML = "<a>Start the Game</a>";
-    //document.getElementById("p1").getElementsByTagName("a")[0].href = "${Link}";
-    document.getElementById("p1").getElementsByTagName("a")[0].href = "https://expc.ling.uni-potsdam.de/login/?next=%2F";
+    document.getElementById("p1").getElementsByTagName("a")[0].href = "${Link}";
     document.getElementById("p1").getElementsByTagName("a")[0].target="_blank";
     document.getElementById('assignmentId').value = assign;
     document.getElementById('browser').value = navigator.userAgent;
@@ -330,3 +322,4 @@ function showSlides(n) {
   dots[slideIndex-1].className += " active";
 }
 </script>
+
