@@ -492,7 +492,7 @@ class DiToBot:
                          "room": room_id}
                     )
                     sleep(1)
-                    self.confirmation_code(room_id, "success")
+                    self.confirmation_code(room_id, "success", receiver_id=curr_usr["id"])
                     sleep(1)
                     self.close_game(room_id)
                 else:
@@ -639,15 +639,29 @@ class DiToBot:
         if receiver_id is not None:
             kwargs["receiver_id"] = receiver_id
 
-        amt_token = ''.join(random.choices(
+        amt_token_a = ''.join(random.choices(
             string.ascii_uppercase + string.digits, k=6
         ))
+
+        amt_token_b = ''.join(random.choices(
+            string.ascii_uppercase + string.digits, k=6
+        ))
+
         # post AMT token to logs
         response = requests.post(
             f"{self.uri}/logs",
             json={"event": "confirmation_log",
                   "room_id": room_id,
-                  "data": {"status_txt": status, "amt_token": amt_token},
+                  "data": {"status_txt": status, "amt_token": amt_token_a},
+                  **kwargs},
+            headers={"Authorization": f"Bearer {self.token}"}
+        )
+
+        response = requests.post(
+            f"{self.uri}/logs",
+            json={"event": "confirmation_log",
+                  "room_id": room_id,
+                  "data": {"status_txt": status, "amt_token": amt_token_b},
                   **kwargs},
             headers={"Authorization": f"Bearer {self.token}"}
         )
@@ -665,10 +679,16 @@ class DiToBot:
         )
         self.sio.emit(
             "text",
-            {"message": f"Here is your token: {amt_token}",
+            {"message": f"Here is your token: {amt_token_a}",
              "room": room_id, **kwargs}
         )
-        return amt_token
+
+        self.sio.emit(
+            "text",
+            {"message": f"Here is your token: {amt_token_b}",
+             "room": room_id, **kwargs}
+        )
+        return amt_token_a
 
     def close_game(self, room_id):
         """Erase any data structures no longer necessary."""
