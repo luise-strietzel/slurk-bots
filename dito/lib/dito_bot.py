@@ -656,8 +656,7 @@ class DiToBot:
             json={"event": "confirmation_log",
                   "room_id": room_id,
                   "data": {"status_txt": status, "amt_token": amt_token_a},
-                  "receiver_id": kwargs["receiver_id"]
-                  },
+                  "user_id": receiver_id},
                   #**kwargs
             headers={"Authorization": f"Bearer {self.token}"}
         )
@@ -667,7 +666,7 @@ class DiToBot:
             json={"event": "confirmation_log",
                   "room_id": room_id,
                   "data": {"status_txt": status, "amt_token": amt_token_b},
-                  "receiver_id": kwargs["other_receiver"]},
+                  "user_id": other_receiver},
             headers={"Authorization": f"Bearer {self.token}"}
         )
         if not response.ok:
@@ -688,13 +687,11 @@ class DiToBot:
 #             "room": room_id, **kwargs}
 #        )
 
-        print('KEYS: ')
-        print(list(kwargs.keys()))
-        print()
         self.sio.emit(
             "text",
             {"message": f"Here is your token: {amt_token_a}",
-                "room": room_id, kwargs["receiver_id"]}
+                "room": room_id,
+            "receiver_id": receiver_id }
         )
 
         #self.sio.emit(
@@ -706,11 +703,12 @@ class DiToBot:
         self.sio.emit(
             "text",
             {"message": f"Here is your token: {amt_token_b}",
-                "room": room_id, kwargs["other_receiver"]}
+                "room": room_id,
+             "receiver_id": other_receiver}
         )
 
 
-        return amt_token_a
+        return amt_token_a, amt_token_b
 
     def close_game(self, room_id):
         """Erase any data structures no longer necessary."""
