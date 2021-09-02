@@ -656,7 +656,9 @@ class DiToBot:
             json={"event": "confirmation_log",
                   "room_id": room_id,
                   "data": {"status_txt": status, "amt_token": amt_token_a},
-                  **kwargs},
+                  "receiver_id": kwargs["receiver_id"]
+                  },
+                  #**kwargs
             headers={"Authorization": f"Bearer {self.token}"}
         )
 
@@ -665,7 +667,7 @@ class DiToBot:
             json={"event": "confirmation_log",
                   "room_id": room_id,
                   "data": {"status_txt": status, "amt_token": amt_token_b},
-                  **kwargs},
+                  "receiver_id": kwargs["other_receiver"]},
             headers={"Authorization": f"Bearer {self.token}"}
         )
         if not response.ok:
@@ -685,6 +687,10 @@ class DiToBot:
 #            {"message": f"Here is your token: {amt_token_a}",
 #             "room": room_id, **kwargs}
 #        )
+
+        print('KEYS: ')
+        print(list(kwargs.keys()))
+        print()
         self.sio.emit(
             "text",
             {"message": f"Here is your token: {amt_token_a}",
