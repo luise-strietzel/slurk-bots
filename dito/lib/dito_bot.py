@@ -492,7 +492,7 @@ class DiToBot:
                          "room": room_id}
                     )
                     sleep(1)
-                    self.confirmation_code(room_id, "success", receiver_id=curr_usr["id"])
+                    self.confirmation_code(room_id, "success", receiver_id=curr_usr["id"], other_receiver=other_usr["id"])
                     sleep(1)
                     self.close_game(room_id)
                 else:
@@ -632,12 +632,15 @@ class DiToBot:
         self.confirmation_code(room_id, "no_reply", receiver_id=curr_usr["id"])
         self.close_game(room_id)
 
-    def confirmation_code(self, room_id, status, receiver_id=None):
+    def confirmation_code(self, room_id, status, receiver_id=None, other_receiver=None):
         """Generate AMT token that will be sent to each player."""
         kwargs = dict()
         # either only for one user or for both
         if receiver_id is not None:
             kwargs["receiver_id"] = receiver_id
+
+        if other_receiver is not None:
+            kwargs["other_receiver"] = other_receiver
 
         amt_token_a = ''.join(random.choices(
             string.ascii_uppercase + string.digits, k=6
@@ -677,17 +680,30 @@ class DiToBot:
                         "the HIT webpage, and close this browser window. ",
              "room": room_id, **kwargs}
         )
+    #    self.sio.emit(
+#            "text",
+#            {"message": f"Here is your token: {amt_token_a}",
+#             "room": room_id, **kwargs}
+#        )
         self.sio.emit(
             "text",
             {"message": f"Here is your token: {amt_token_a}",
-             "room": room_id, **kwargs}
+                "room": room_id, kwargs["receiver_id"]}
         )
+
+        #self.sio.emit(
+    #        "text",
+    #        {"message": f"Here is your token: {amt_token_b}",
+    #         "room": room_id, **kwargs}
+    #    )
 
         self.sio.emit(
             "text",
             {"message": f"Here is your token: {amt_token_b}",
-             "room": room_id, **kwargs}
+                "room": room_id, kwargs["other_receiver"]}
         )
+
+
         return amt_token_a
 
     def close_game(self, room_id):
