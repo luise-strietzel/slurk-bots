@@ -1,0 +1,1 @@
+The file "Instructions AMT same or different.pdf" contains the instruction slides in pdf format. The jpg files contain the single slides of the presentation. These files are necessary to display the slides on AMT.
