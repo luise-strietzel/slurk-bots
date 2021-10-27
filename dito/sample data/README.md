@@ -1,1 +1,1 @@
-This folder contains the logs obtained from collecting sample data with friends and family. 
+This folder contains the logs obtained from collecting sample data with friends and family. The dialogues are displayed in the file 'Images_and_Dialogues_Collected.html' (you probably need to download it open it in the browser). The 'evaluate sample data.ipynb' contains the code used for the evaluation of the sample dialogues.  
